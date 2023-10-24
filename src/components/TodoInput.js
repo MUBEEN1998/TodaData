@@ -1,6 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useTodo } from '../context';
 
 const TodoInput = ({todo}) => {
+    console.log(todo)
+    const [isTodoEditable,setIsTodoEditable]=useState(false);
+    const [todoMsg,setTodoMsg]=useState(todo?.todo)
+    console.log(todo?.todo   )
+    const {updateTodo,deleteTodo,toggleCompleted}=useTodo();
+    const editTodo=()=>{
+        updateTodo(todo.id,{...todo,todo:todoMsg})
+        setIsTodoEditable(false)
+    }
+    // console.log(todoMsg)
+    const togolcomponent=()=>{
+        toggleCompleted(todo.id)
+    }
   return (
     <div>
         <div
@@ -16,7 +30,7 @@ const TodoInput = ({todo}) => {
             />
             <input
                 type="text"
-                className={`border outline-none w-full bg-transparent rounded-lg ${
+                className={`border outline-none w-full bg-transparent text-black-800 rounded-lg ${
                     isTodoEditable ? "border-black/10 px-2" : "border-transparent"
                 } ${todo.completed ? "line-through" : ""}`}
                 value={todoMsg}

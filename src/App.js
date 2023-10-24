@@ -1,20 +1,61 @@
-import { useState } from "react"
-import { todoprovider } from "./context"
+import { useEffect, useState } from "react"
+import { TodoProvider} from "./context"
+import { TodoForm, TodoInput } from "./components"
 export default function App() {
   const [todos,setTodos]=useState([])
+  // console.log(todo)
+
+  const addTodo=(initodo)=>{
+    // console.log(initodo )
+    setTodos((prev)=>[{id:Date.now(),...initodo},...prev])
+  }
+  const updateTodo=(id,todos)=>{
+    setTodos((prev)=>prev.map((prevtodo)=>prevtodo.id===id?todos:prevtodo))
+  }
+
+  const deleteTodo=(id)=>{
+    // console.log(id)
+    setTodos((prev)=>prev.filter((todos)=>todos.id!==id))
+  }
+
+  const toggleCompelete=(id)=>{
+    setTodos((prev)=>prev.map((prevTodo)=>prevTodo===id?{...prevTodo,completed:!prevTodo.completed}:prevTodo))
+  }
+
+  
+
+  useEffect(()=>{
+    const todos=JSON.parse(localStorage.getItem("todos"))
+    if(todos && todos.lentgh>0){
+      setTodos(todos)
+    }
+  },[])
+  useEffect(()=>{
+    localStorage.setItem("todos",JSON.stringify(todos))
+  },[todos])
+ 
+
   return (
-   <todoprovider value={{todo,addTodo,updateTodo,deleteTodo}}>
+   <TodoProvider value={{todos,addTodo,updateTodo,deleteTodo,toggleCompelete}}>
    <div className="bg-[#172842] min-h-screen py-8">
                 <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-white">
                     <h1 className="text-2xl font-bold text-center mb-8 mt-2">Manage Your Todos</h1>
                     <div className="mb-4">
-                        {/* Todo form goes here */} 
+                        <TodoForm/>
                     </div>
                     <div className="flex flex-wrap gap-y-3">
                         {/*Loop and Add TodoItem here */}
+                        {todos.map((item)=>{
+                          // console.log(todo)
+                          return (
+                            <div key={item.id} className="w-full ">
+                              <TodoInput todo={item}/>
+                              </div>
+                          )
+                        })}
                     </div>
                 </div>
             </div>
-   </todoprovider>
+   </TodoProvider>
   )
 }
